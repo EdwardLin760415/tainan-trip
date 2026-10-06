@@ -34,7 +34,7 @@
       align-items: center;
       min-height: 380px;
       padding: 44px 18px;
-      background: #f1ece2 url("./tainan-trip-cover.webp") 68% center / cover no-repeat;
+      background: #f1ece2 url("./images/cover.webp") 68% center / cover no-repeat;
     }
     .hero::before {
       content: "";
@@ -66,6 +66,11 @@
     .today-stop::before { content: ""; position: absolute; left: 55px; top: 17px; width: 12px; height: 12px; border: 2px solid var(--green); border-radius: 50%; background: #fffefa; }
     .today-stop time { color: #f6d7bf; font-size: .88rem; font-weight: 800; font-variant-numeric: tabular-nums; }
     .today-stop-copy { min-width: 0; }
+    .today-stop label { display: flex; align-items: flex-start; gap: 9px; min-width: 0; cursor: pointer; }
+    .today-stop input[type="checkbox"] { width: 21px; height: 21px; flex: 0 0 21px; margin: 1px 0 0; accent-color: #d7e7d8; cursor: pointer; }
+    .today-stop.is-checked .today-stop-copy { opacity: .68; }
+    .today-stop.is-checked strong, .today-stop.is-checked span { text-decoration: line-through; }
+    .day[hidden] { display: none; }
     .today-stop strong { display: block; font-size: .94rem; line-height: 1.45; }
     .today-stop span { display: block; margin-top: 2px; color: #e2ede3; font-size: .82rem; line-height: 1.5; }
     .today-link { display: inline-block; margin: 8px 0 0 76px; color: #fff; font-size: .84rem; font-weight: 750; text-underline-offset: 3px; }
@@ -94,6 +99,19 @@
     .site-qr { margin: 14px 0 0; text-align: center; }
     .site-qr img { display: block; width: min(220px, 100%); height: auto; margin: 0 auto; image-rendering: pixelated; }
     .site-qr figcaption { margin-top: 6px; color: var(--muted); font-size: .8rem; }
+    .dinner-vote { width: min(100% - 32px, 680px); margin: 0 auto 30px; padding: 16px; border: 1px solid var(--line); border-radius: 16px; background: var(--card); }
+    .dinner-vote h2 { margin-bottom: 8px; font-size: 1.12rem; }
+    .dinner-vote p { margin: 6px 0 12px; color: var(--muted); font-size: .9rem; }
+    .dinner-vote label { display: block; margin: 10px 0 4px; font-size: .9rem; font-weight: 700; }
+    .dinner-vote input, .dinner-vote select { width: 100%; min-height: 46px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 10px; background: var(--card); color: var(--ink); font: inherit; }
+    .dinner-vote button { min-height: 46px; margin-top: 12px; padding: 10px 18px; border: 0; border-radius: 10px; background: var(--green); color: white; font: inherit; cursor: pointer; }
+    .dinner-vote button:disabled { opacity: .6; cursor: wait; }
+    .dinner-vote :focus-visible { outline: 3px solid var(--orange); outline-offset: 3px; }
+    .poll-close { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--line); }
+    .dinner-vote [hidden] { display: none; }
+    .vote-results { list-style: none; margin: 8px 0 0; padding: 0; }
+    .vote-results li { display: flex; justify-content: space-between; gap: 16px; padding: 9px 0; border-bottom: 1px solid var(--line); }
+    .vote-results strong { color: var(--green); white-space: nowrap; }
     @media (min-width: 600px) {
       .hero { padding-top: 38px; padding-bottom: 22px; }
       .today-card { margin-top: 17px; padding: 21px 23px 18px; }
@@ -130,7 +148,7 @@
   <main>
     <p class="intro">先存下這份輕鬆版路線，沿途看到喜歡的小店，也可以停下來多待一會兒。</p>
 
-    <section class="day" aria-labelledby="day-one">
+    <section class="day" id="day-one-section" aria-labelledby="day-one">
       <div class="day-heading">
         <span class="day-number">DAY 01</span>
         <div><h2 id="day-one">第一天｜巷弄與府城味</h2><p class="day-caption">抵達台南・老城散步・入住休息</p></div>
@@ -143,7 +161,7 @@
       </div>
     </section>
 
-    <section class="day" aria-labelledby="day-two">
+    <section class="day" id="day-two-section" aria-labelledby="day-two">
       <div class="day-heading">
         <span class="day-number">DAY 02</span>
         <div><h2 id="day-two">第二天｜早晨與海風</h2><p class="day-caption">睡飽再出發・帶著好心情返程</p></div>
@@ -168,12 +186,45 @@
     <figure class="site-qr"><img src="./tainan-trip-qr.png" alt="掃描 QR 碼開啟台南行程"><figcaption>掃描 QR 碼開啟行程</figcaption></figure>
   </section>
 
+  <section class="dinner-vote" aria-labelledby="dinner-vote-title">
+    <h2 id="dinner-vote-title">晚餐吃什麼？</h2>
+    <p id="vote-intro">選一個想吃的晚餐，留下暱稱一起投票。選項先用示意的。</p>
+    <p id="poll-state-status" role="status">正在確認投票狀態…</p>
+    <form id="dinner-vote-form">
+      <label for="vote-nickname">暱稱</label>
+      <input id="vote-nickname" name="nickname" required disabled maxlength="40" autocomplete="off" placeholder="例如：小天">
+      <label for="vote-option">晚餐選項</label>
+      <select id="vote-option" name="option" required disabled>
+        <option value="">請選擇</option>
+        <option value="牛肉湯">牛肉湯</option>
+        <option value="台南小吃">台南小吃</option>
+        <option value="海鮮">海鮮</option>
+      </select>
+      <button id="vote-submit" type="submit" disabled>投一票</button>
+    </form>
+    <p id="vote-status" role="status" aria-live="polite"></p>
+    <h3 class="place">目前票數</h3>
+    <ul id="vote-results" class="vote-results" aria-live="polite"></ul>
+    <p id="vote-count-status" role="status">正在讀取票數…</p>
+    <button id="vote-refresh" type="button">更新票數</button>
+    <div class="poll-close" id="poll-close">
+      <h3 class="place">結束投票（主揪用）</h3>
+      <form id="close-poll-form">
+        <label for="close-passphrase">主揪密語</label>
+        <input id="close-passphrase" type="password" required disabled maxlength="256" autocomplete="off" placeholder="請輸入主揪密語">
+        <button id="close-poll-submit" type="submit" disabled>結束投票</button>
+      </form>
+      <p id="close-poll-status" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+
   <script>
     (() => {
       const plans = {
         1: {
           title: '第一天｜巷弄與府城味',
           anchor: '#day-one',
+          section: 'day-one-section',
           stops: [
             ['10:30', '阿霞牛肉湯', '先用一碗熱騰騰的牛肉湯暖胃，開啟台南小旅行。'],
             ['12:00', '赤崁樓周邊', '沿著古城街區慢慢走，看看老建築與巷口小店。'],
@@ -184,6 +235,7 @@
         2: {
           title: '第二天｜早晨與海風',
           anchor: '#day-two',
+          section: 'day-two-section',
           stops: [
             ['09:00', '府城早餐舖', '用一份在地早餐慢慢醒來，替第二天補充元氣。'],
             ['10:30', '安平老街', '走訪老街與巷弄，挑幾樣喜歡的伴手禮帶回家。'],
@@ -197,6 +249,11 @@
       const link = document.getElementById('today-link');
       const date = document.getElementById('today-date');
       const buttons = document.querySelectorAll('.day-switch button');
+      const daySections = {
+        1: document.getElementById('day-one-section'),
+        2: document.getElementById('day-two-section')
+      };
+      const storagePrefix = 'tainan-trip-checklist-day-';
 
       function showDay(day) {
         const plan = plans[day];
@@ -204,9 +261,20 @@
         date.textContent = `目前查看：${day === 1 ? '第一天' : '第二天'}`;
         link.href = plan.anchor;
         link.textContent = `看${day === 1 ? '第一天' : '第二天'}完整行程 ↓`;
-        stops.innerHTML = plan.stops.map(([time, place, description]) =>
-          `<div class="today-stop"><time>${time}</time><div class="today-stop-copy"><strong>示意：${place}</strong><span>${description}</span></div></div>`
-        ).join('');
+        Object.entries(daySections).forEach(([sectionDay, section]) => {
+          section.hidden = Number(sectionDay) !== day;
+        });
+        stops.innerHTML = plan.stops.map(([time, place, description], index) => {
+          const key = `${storagePrefix}${day}-${index}`;
+          const checked = localStorage.getItem(key) === 'true';
+          return `<div class="today-stop${checked ? ' is-checked' : ''}"><time>${time}</time><label><input type="checkbox" data-stop-index="${index}"${checked ? ' checked' : ''} aria-label="完成：${place}"><span class="today-stop-copy"><strong>示意：${place}</strong><span>${description}</span></span></label></div>`;
+        }).join('');
+        stops.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+          checkbox.addEventListener('change', () => {
+            localStorage.setItem(`${storagePrefix}${day}-${checkbox.dataset.stopIndex}`, String(checkbox.checked));
+            checkbox.closest('.today-stop').classList.toggle('is-checked', checkbox.checked);
+          });
+        });
         buttons.forEach(button => button.setAttribute('aria-pressed', String(Number(button.dataset.day) === day)));
       }
 
@@ -216,5 +284,191 @@
       showDay(1);
     })();
   </script>
+
+  <script>
+    (() => {
+      // Public browser key; access is controlled by database grants and RLS.
+      const projectUrl = 'https://ctmtwjfvgsufhwmtehyk.supabase.co';
+      const publicKey = 'sb_publishable_WhUR4DdjcM_4MnghKn-uAw_w3GwGAr5';
+      const endpoint = `${projectUrl}/rest/v1/dinner_votes`;
+      const choices = ['牛肉湯', '台南小吃', '海鮮'];
+      const form = document.getElementById('dinner-vote-form');
+      const nickname = document.getElementById('vote-nickname');
+      const option = document.getElementById('vote-option');
+      const submit = document.getElementById('vote-submit');
+      const status = document.getElementById('vote-status');
+      const results = document.getElementById('vote-results');
+      const countStatus = document.getElementById('vote-count-status');
+      const refresh = document.getElementById('vote-refresh');
+      const voteTitle = document.getElementById('dinner-vote-title');
+      const intro = document.getElementById('vote-intro');
+      const stateStatus = document.getElementById('poll-state-status');
+      const closeSection = document.getElementById('poll-close');
+      const closeForm = document.getElementById('close-poll-form');
+      const passphrase = document.getElementById('close-passphrase');
+      const closeSubmit = document.getElementById('close-poll-submit');
+      const closeStatus = document.getElementById('close-poll-status');
+      let submitting = false;
+      let closing = false;
+      let stateKnown = false;
+      let pollClosed = false;
+      let stateVersion = 0;
+      let countVersion = 0;
+
+      function applyState() {
+        voteTitle.textContent = pollClosed ? '投票已結束' : '晚餐吃什麼？';
+        form.hidden = pollClosed;
+        intro.hidden = pollClosed;
+        closeSection.hidden = pollClosed;
+        [nickname, option, submit].forEach(control => {
+          control.disabled = !stateKnown || pollClosed || submitting || closing;
+        });
+        [passphrase, closeSubmit].forEach(control => {
+          control.disabled = !stateKnown || pollClosed || closing;
+        });
+        if (pollClosed) {
+          status.textContent = '';
+          stateStatus.textContent = '以下是各選項的最後票數。';
+        } else if (stateKnown) {
+          stateStatus.textContent = '投票開放中';
+        } else {
+          stateStatus.textContent = '暫時無法確認投票狀態，請按「更新票數」再試。';
+        }
+      }
+
+      async function loadState() {
+        const version = ++stateVersion;
+        try {
+          const response = await fetch(`${projectUrl}/rest/v1/poll_state?select=closed&id=eq.1`, {
+            headers: {apikey: publicKey}, cache: 'no-store'
+          });
+          if (!response.ok) throw new Error('狀態不可用');
+          const rows = await response.json();
+          if (rows.length !== 1 || typeof rows[0].closed !== 'boolean') throw new Error('狀態不可用');
+          if (version !== stateVersion) return;
+          pollClosed = rows[0].closed;
+          stateKnown = true;
+        } catch {
+          if (version !== stateVersion) return;
+          stateKnown = false;
+        }
+        applyState();
+      }
+
+      async function loadCounts() {
+        const version = ++countVersion;
+        refresh.disabled = true;
+        countStatus.textContent = '正在讀取票數…';
+        try {
+          const counts = await Promise.all(choices.map(async choice => {
+            const query = new URLSearchParams({select: 'id', option: `eq.${choice}`, limit: '1'});
+            const response = await fetch(`${endpoint}?${query}`, {
+              headers: {apikey: publicKey, Prefer: 'count=exact'}, cache: 'no-store'
+            });
+            if (!response.ok) throw new Error('讀取失敗');
+            const total = response.headers.get('Content-Range')?.split('/')[1];
+            if (!/^\d+$/.test(total || '')) throw new Error('票數不可用');
+            return Number(total);
+          }));
+          if (version !== countVersion) return;
+          results.replaceChildren(...choices.map((choice, index) => {
+            const item = document.createElement('li');
+            const name = document.createElement('span');
+            const count = document.createElement('strong');
+            name.textContent = choice;
+            count.textContent = `${counts[index]} 票`;
+            item.append(name, count);
+            return item;
+          }));
+          countStatus.textContent = '票數已更新';
+        } catch {
+          if (version === countVersion) countStatus.textContent = '暫時無法更新票數，請按「更新票數」再試。';
+        } finally {
+          if (version === countVersion) refresh.disabled = false;
+        }
+      }
+
+      form.addEventListener('submit', async event => {
+        event.preventDefault();
+        if (submitting || closing || !stateKnown || pollClosed) return;
+        const name = nickname.value.trim();
+        if (!name) {
+          status.textContent = '請先填寫暱稱。';
+          nickname.focus();
+          return;
+        }
+        if (!choices.includes(option.value)) return;
+        submitting = true;
+        applyState();
+        status.textContent = '正在送出投票…';
+        try {
+          await loadState();
+          if (!stateKnown || pollClosed) return;
+          const response = await fetch(endpoint, {
+            method: 'POST',
+            headers: {apikey: publicKey, 'Content-Type': 'application/json', Prefer: 'return=minimal'},
+            body: JSON.stringify({nickname: name, option: option.value})
+          });
+          if (!response.ok) {
+            await loadState();
+            if (pollClosed) return;
+            throw new Error('投票失敗');
+          }
+          status.textContent = `投票成功！${name} 的「${option.value}」已儲存。`;
+          await loadCounts();
+        } catch {
+          status.textContent = '未能確認投票是否送出。請先更新票數確認，再決定是否重試。';
+        } finally {
+          submitting = false;
+          applyState();
+        }
+      });
+      closeForm.addEventListener('submit', async event => {
+        event.preventDefault();
+        if (closing || submitting || !stateKnown || pollClosed) return;
+        const value = passphrase.value;
+        if (!value) return;
+        closing = true;
+        applyState();
+        closeStatus.textContent = '正在確認密語…';
+        try {
+          const response = await fetch(`${projectUrl}/functions/v1/close-poll`, {
+            method: 'POST',
+            headers: {apikey: publicKey, 'Content-Type': 'application/json'},
+            body: JSON.stringify({passphrase: value})
+          });
+          const result = await response.json();
+          if (response.status === 403) {
+            closeStatus.textContent = '密語不正確，沒有結束投票。';
+          } else if (response.ok && result.closed === true) {
+            ++stateVersion;
+            pollClosed = true;
+            stateKnown = true;
+            applyState();
+          } else {
+            throw new Error('無法結束投票');
+          }
+          await Promise.all([loadState(), loadCounts()]);
+        } catch {
+          closeStatus.textContent = '暫時無法確認是否結束投票，請更新票數確認狀態。';
+          await loadState();
+        } finally {
+          passphrase.value = '';
+          closing = false;
+          applyState();
+        }
+      });
+      const refreshPoll = () => Promise.all([loadState(), loadCounts()]);
+      refresh.addEventListener('click', refreshPoll);
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') refreshPoll();
+      });
+      setInterval(() => {
+        if (document.visibilityState === 'visible') loadState();
+      }, 30000);
+      refreshPoll();
+    })();
+  </script>
 </body>
 </html>
+
