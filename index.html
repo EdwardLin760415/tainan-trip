@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f6f1e8">
+  <title>台南兩天一夜｜慢慢走，慢慢吃</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #28332f;
+      --muted: #66736b;
+      --paper: #fbf8f1;
+      --card: #fffefa;
+      --green: #426c58;
+      --green-pale: #e7eee5;
+      --orange: #a95d31;
+      --line: #e8e2d6;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      background: var(--paper);
+      color: var(--ink);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif;
+      font-size: 17px;
+      line-height: 1.65;
+      letter-spacing: .02em;
+    }
+    .hero {
+      padding: 26px 18px 17px;
+      background: #e9efe6;
+    }
+    .hero-inner, main, footer { width: min(100% - 32px, 680px); margin-inline: auto; }
+    .eyebrow { margin: 0 0 5px; color: var(--green); font-size: .78rem; font-weight: 750; letter-spacing: .16em; }
+    h1 { margin: 0; font-size: clamp(2.1rem, 9vw, 3.1rem); line-height: 1.2; letter-spacing: .035em; }
+    .subtitle { margin: 7px 0 0; color: #52645a; font-size: .96rem; }
+    .hero-note { display: inline-flex; margin-top: 10px; padding: 4px 10px; border-radius: 99px; background: rgba(255,255,255,.75); color: #52645a; font-size: .78rem; }
+
+    .today-card { width: min(100% - 24px, 680px); margin: 12px auto 0; padding: 17px 17px 15px; border-radius: 18px; background: var(--green); color: #fffefa; box-shadow: 0 7px 20px rgba(40,60,46,.12); }
+    .today-label { margin: 0 0 3px; color: #d7e7d8; font-size: .82rem; font-weight: 750; letter-spacing: .08em; }
+    .today-card h2 { margin: 0; font-size: 1.32rem; line-height: 1.4; }
+    .today-date { margin: 3px 0 0; color: #d7e7d8; font-size: .8rem; }
+    .day-switch { display: flex; gap: 8px; margin-top: 12px; }
+    .day-switch button { min-height: 42px; flex: 1; border: 1px solid rgba(255,255,255,.42); border-radius: 11px; background: transparent; color: #fff; font: inherit; font-size: .9rem; font-weight: 750; cursor: pointer; }
+    .day-switch button[aria-pressed="true"] { border-color: #fffefa; background: #fffefa; color: var(--green); }
+    .today-stops { position: relative; display: grid; margin-top: 11px; }
+    .today-stops::before { content: ""; position: absolute; left: 60px; top: 17px; bottom: 20px; width: 2px; background: rgba(255,255,255,.4); }
+    .today-stop { position: relative; display: grid; grid-template-columns: 60px minmax(0, 1fr); gap: 16px; padding: 8px 0 10px; }
+    .today-stop::before { content: ""; position: absolute; left: 55px; top: 17px; width: 12px; height: 12px; border: 2px solid var(--green); border-radius: 50%; background: #fffefa; }
+    .today-stop time { color: #f6d7bf; font-size: .88rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+    .today-stop-copy { min-width: 0; }
+    .today-stop strong { display: block; font-size: .94rem; line-height: 1.45; }
+    .today-stop span { display: block; margin-top: 2px; color: #e2ede3; font-size: .82rem; line-height: 1.5; }
+    .today-link { display: inline-block; margin: 8px 0 0 76px; color: #fff; font-size: .84rem; font-weight: 750; text-underline-offset: 3px; }
+
+    main { padding: 24px 0 40px; }
+    .intro { margin: 0 0 22px; color: var(--muted); font-size: .92rem; }
+    .day { margin: 0 0 28px; }
+    .day-heading { display: flex; align-items: center; gap: 11px; margin: 0 0 10px; }
+    .day-number { display: grid; width: 42px; height: 42px; flex: 0 0 42px; place-items: center; border-radius: 14px; background: var(--green); color: white; font-size: .83rem; font-weight: 800; }
+    h2 { margin: 0; font-size: 1.22rem; line-height: 1.35; }
+    .day-caption { margin: 2px 0 0; color: var(--muted); font-size: .82rem; }
+    .stops { position: relative; display: grid; }
+    .stops::before { content: ""; position: absolute; left: 71px; top: 15px; bottom: 22px; width: 2px; background: #d7e1d5; }
+    .stop { position: relative; display: grid; grid-template-columns: 55px minmax(0, 1fr); gap: 31px; padding: 9px 0 15px; }
+    .stop::before { content: ""; position: absolute; left: 65px; top: 15px; width: 13px; height: 13px; border: 3px solid var(--paper); border-radius: 50%; background: var(--green); box-shadow: 0 0 0 1px var(--green); }
+    .stop:last-child { padding-bottom: 5px; }
+    .time { padding-top: 0; color: var(--orange); font-size: .88rem; font-weight: 800; font-variant-numeric: tabular-nums; white-space: nowrap; }
+    .place { margin: 0; font-size: 1rem; font-weight: 800; line-height: 1.4; }
+    .description { margin: 3px 0 0; color: var(--muted); font-size: .9rem; line-height: 1.6; }
+    .tip { display: flex; gap: 9px; margin-top: 7px; padding: 13px 14px; border-radius: 14px; background: var(--green-pale); color: #43574a; font-size: .88rem; }
+    .tip strong { flex: 0 0 auto; }
+    footer { padding: 0 0 24px; color: #7d857e; text-align: center; font-size: .78rem; }
+    .before-you-go { width: min(100% - 32px, 680px); margin: 0 auto 30px; padding: 16px; border: 1px solid var(--line); border-radius: 16px; background: var(--card); }
+    .before-you-go h2 { margin-bottom: 8px; font-size: 1.12rem; }
+    .before-you-go p { margin: 4px 0; font-size: .9rem; }
+    @media (min-width: 600px) {
+      .hero { padding-top: 38px; padding-bottom: 22px; }
+      .today-card { margin-top: 17px; padding: 21px 23px 18px; }
+      main { padding-top: 30px; }
+      .stop { grid-template-columns: 64px minmax(0, 1fr); gap: 32px; padding-bottom: 17px; }
+      .stops::before { left: 80px; }
+      .stop::before { left: 74px; }
+    }
+    @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <p class="eyebrow">TA I N A N · 小旅行提案</p>
+      <h1>台南兩天一夜</h1>
+      <p class="subtitle">慢慢走，慢慢吃，把時間留給老城。</p>
+      <span class="hero-note">店名與時間為行程示意，出發前再確認</span>
+    </div>
+  </header>
+
+  <section class="today-card" aria-labelledby="today-title">
+    <p class="today-label">今天要去哪裡</p>
+    <h2 id="today-title">第一天｜巷弄與府城味</h2>
+    <p class="today-date" id="today-date">選擇今天的行程日</p>
+    <div class="day-switch" role="group" aria-label="選擇今天的行程">
+      <button type="button" data-day="1" aria-pressed="true">第一天</button>
+      <button type="button" data-day="2" aria-pressed="false">第二天</button>
+    </div>
+    <div class="today-stops" id="today-stops" aria-live="polite"></div>
+    <a class="today-link" href="#day-one" id="today-link">看第一天完整行程 ↓</a>
+  </section>
+
+  <main>
+    <p class="intro">先存下這份輕鬆版路線，沿途看到喜歡的小店，也可以停下來多待一會兒。</p>
+
+    <section class="day" aria-labelledby="day-one">
+      <div class="day-heading">
+        <span class="day-number">DAY 01</span>
+        <div><h2 id="day-one">第一天｜巷弄與府城味</h2><p class="day-caption">抵達台南・老城散步・入住休息</p></div>
+      </div>
+      <div class="stops">
+        <article class="stop"><time class="time" datetime="10:30">10:30</time><div><h3 class="place">示意：阿霞牛肉湯</h3><p class="description">先用一碗熱騰騰的牛肉湯暖胃，開啟台南小旅行。</p></div></article>
+        <article class="stop"><time class="time" datetime="12:00">12:00</time><div><h3 class="place">示意：赤崁樓周邊</h3><p class="description">沿著古城街區慢慢走，看看老建築與巷口小店。</p></div></article>
+        <article class="stop"><time class="time" datetime="15:00">15:00</time><div><h3 class="place">示意：巷口甜點室</h3><p class="description">找間舒服的咖啡店歇腳，配一份當日手作甜點。</p></div></article>
+        <article class="stop"><time class="time" datetime="18:00">18:00</time><div><h3 class="place">示意：國華街晚餐散策</h3><p class="description">邊逛邊挑想吃的小吃，把晚餐變成一場街頭尋味。</p></div></article>
+      </div>
+    </section>
+
+    <section class="day" aria-labelledby="day-two">
+      <div class="day-heading">
+        <span class="day-number">DAY 02</span>
+        <div><h2 id="day-two">第二天｜早晨與海風</h2><p class="day-caption">睡飽再出發・帶著好心情返程</p></div>
+      </div>
+      <div class="stops">
+        <article class="stop"><time class="time" datetime="09:00">09:00</time><div><h3 class="place">示意：府城早餐舖</h3><p class="description">用一份在地早餐慢慢醒來，替第二天補充元氣。</p></div></article>
+        <article class="stop"><time class="time" datetime="10:30">10:30</time><div><h3 class="place">示意：安平老街</h3><p class="description">走訪老街與巷弄，挑幾樣喜歡的伴手禮帶回家。</p></div></article>
+        <article class="stop"><time class="time" datetime="13:30">13:30</time><div><h3 class="place">示意：漁光島海邊</h3><p class="description">吹吹海風、看看樹影，留一段空白給旅行的午後。</p></div></article>
+        <article class="stop"><time class="time" datetime="16:00">16:00</time><div><h3 class="place">示意：返程前點心站</h3><p class="description">買杯飲料或一份小點心，帶著台南的餘韻出發返程。</p></div></article>
+      </div>
+    </section>
+
+    <aside class="tip"><strong>小提醒</strong><span>以上店名與時間都是示意安排，實際營業時間、交通與訂位資訊請出發前確認。</span></aside>
+  </main>
+  <footer>祝你們在台南，吃得滿足、走得自在。</footer>
+  <section class="before-you-go" aria-labelledby="before-you-go-title">
+    <h2 id="before-you-go-title">行前提醒</h2>
+    <p>天氣：示意晴時多雲，出發前查看最新預報。</p>
+    <p>要帶的東西：示意帶水、遮陽帽與行動電源。</p>
+    <p>集合時間：示意第一天上午 10:00 集合。</p>
+  </section>
+
+  <script>
+    (() => {
+      const plans = {
+        1: {
+          title: '第一天｜巷弄與府城味',
+          anchor: '#day-one',
+          stops: [
+            ['10:30', '阿霞牛肉湯', '先用一碗熱騰騰的牛肉湯暖胃，開啟台南小旅行。'],
+            ['12:00', '赤崁樓周邊', '沿著古城街區慢慢走，看看老建築與巷口小店。'],
+            ['15:00', '巷口甜點室', '找間舒服的咖啡店歇腳，配一份當日手作甜點。'],
+            ['18:00', '國華街晚餐散策', '邊逛邊挑想吃的小吃，把晚餐變成一場街頭尋味。']
+          ]
+        },
+        2: {
+          title: '第二天｜早晨與海風',
+          anchor: '#day-two',
+          stops: [
+            ['09:00', '府城早餐舖', '用一份在地早餐慢慢醒來，替第二天補充元氣。'],
+            ['10:30', '安平老街', '走訪老街與巷弄，挑幾樣喜歡的伴手禮帶回家。'],
+            ['13:30', '漁光島海邊', '吹吹海風、看看樹影，留一段空白給旅行的午後。'],
+            ['16:00', '返程前點心站', '買杯飲料或一份小點心，帶著台南的餘韻出發返程。']
+          ]
+        }
+      };
+      const title = document.getElementById('today-title');
+      const stops = document.getElementById('today-stops');
+      const link = document.getElementById('today-link');
+      const date = document.getElementById('today-date');
+      const buttons = document.querySelectorAll('.day-switch button');
+
+      function showDay(day) {
+        const plan = plans[day];
+        title.textContent = plan.title;
+        date.textContent = `目前查看：${day === 1 ? '第一天' : '第二天'}`;
+        link.href = plan.anchor;
+        link.textContent = `看${day === 1 ? '第一天' : '第二天'}完整行程 ↓`;
+        stops.innerHTML = plan.stops.map(([time, place, description]) =>
+          `<div class="today-stop"><time>${time}</time><div class="today-stop-copy"><strong>示意：${place}</strong><span>${description}</span></div></div>`
+        ).join('');
+        buttons.forEach(button => button.setAttribute('aria-pressed', String(Number(button.dataset.day) === day)));
+      }
+
+      buttons.forEach(button => {
+        button.addEventListener('click', () => showDay(Number(button.dataset.day)));
+      });
+      showDay(1);
+    })();
+  </script>
+</body>
+</html>
