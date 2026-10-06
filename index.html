@@ -29,8 +29,23 @@
       letter-spacing: .02em;
     }
     .hero {
-      padding: 26px 18px 17px;
-      background: #e9efe6;
+      position: relative;
+      display: flex;
+      align-items: center;
+      min-height: 380px;
+      padding: 44px 18px;
+      background: #f1ece2 url("./tainan-trip-cover.webp") 68% center / cover no-repeat;
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, rgba(251,248,241,.97) 0%, rgba(251,248,241,.9) 32%, rgba(251,248,241,.45) 49%, rgba(251,248,241,0) 68%);
+    }
+    .hero-inner { position: relative; z-index: 1; }
+    @media (max-width: 599px) {
+      .hero { min-height: 260px; padding: 30px 16px; background-position: 68% center; }
+      .hero::before { background: linear-gradient(90deg, rgba(251,248,241,.98) 0%, rgba(251,248,241,.9) 39%, rgba(251,248,241,.45) 61%, rgba(251,248,241,0) 83%); }
     }
     .hero-inner, main, footer { width: min(100% - 32px, 680px); margin-inline: auto; }
     .eyebrow { margin: 0 0 5px; color: var(--green); font-size: .78rem; font-weight: 750; letter-spacing: .16em; }
